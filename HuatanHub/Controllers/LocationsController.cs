@@ -127,7 +127,7 @@ namespace HuatanHub.Controllers
 
                 var location = new Location
                 {
-                    Timestamp = data.Timestamp.ToDateFromData("yyyy-MM-ddTHH:mm:ss.ffffff"),
+                    Timestamp = data.Timestamp.ToDateFromData("yyyy-MM-ddTHH:mm:ss"),
                     EmpleadoId = data.Empleado.Id,
                     IsInside = data.IsInside,
                     Lat = data.Lat,
