@@ -10,13 +10,13 @@ WORKDIR /src
 
 COPY ["HuatanHub.csproj", ""]
 
-RUN dotnet restore "./HuatanHub.csproj"
+RUN dotnet restore "HuatanHub/*.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "HuatanHub.csproj" -c Release -o /app/build
+RUN dotnet build "HuatanHub/*.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "HuatanHub.csproj" -c Release -o /app/publish
+RUN dotnet publish "HuatanHub/*.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
