@@ -114,7 +114,7 @@ namespace HuatanHub.Controllers
             //            Inactivos = rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
             //        });
             //}
-            var reporte = new List<ReporteResponse>();
+            var reporte = new ReporteResponse();
             ////////////////////////////////////////////////////////////////
             using (SqlConnection connection = new SqlConnection(con.ConnectionString))
             {
@@ -131,14 +131,11 @@ namespace HuatanHub.Controllers
                     {
                         if (await reader.ReadAsync())
                         {
-                            reporte = new List<ReporteResponse>();
-                            reporte.Add(new ReporteResponse
-                            {
-                                Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]),
-                                Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]),
-                                Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]),
-                                Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"])
-                            });
+                            reporte = new ReporteResponse();
+                            reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
+                            reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
+                            reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
+                            reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
                         }
                     }
                 }
