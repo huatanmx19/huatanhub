@@ -114,8 +114,48 @@ namespace HuatanHub.Controllers
             //            Inactivos = rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
             //        });
             //}
-            var reporte = new ReporteResponse();
+
+            //return Ok(reporte);
+
+
+
             ////////////////////////////////////////////////////////////////
+            //Tipo 1 -INICIO
+            ////////////////////////////////////////////////////////////////
+            //var reporte = new ReporteResponse();
+            //using (SqlConnection connection = new SqlConnection(con.ConnectionString))
+            //{
+            //    using (var command = new SqlCommand(qReporte.Reporte, connection))
+            //    {
+            //        command.CommandType = CommandType.StoredProcedure;
+
+            //        command.Parameters.AddWithValue("@id", id);
+            //        command.Parameters.AddWithValue("@fecha", delta);
+
+            //        await connection.OpenAsync();
+
+            //        using (var reader = await command.ExecuteReaderAsync())
+            //        {
+            //            if (await reader.ReadAsync())
+            //            {
+            //                reporte = new ReporteResponse();
+            //                reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
+            //                reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
+            //                reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
+            //                reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
+            //            }
+            //        }
+            //    }
+            //}
+            //return Ok(reporte);
+            ////////////////////////////////////////////////////////////////
+            //Tipo 1 -FIN
+            ////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////////////////////////
+            //Tipo 2 -INICIO
+            ////////////////////////////////////////////////////////////////
+            var reporte = new List<ReporteResponse>();
             using (SqlConnection connection = new SqlConnection(con.ConnectionString))
             {
                 using (var command = new SqlCommand(qReporte.Reporte, connection))
@@ -125,26 +165,31 @@ namespace HuatanHub.Controllers
                     command.Parameters.AddWithValue("@id", id);
                     command.Parameters.AddWithValue("@fecha", delta);
 
-                    await connection.OpenAsync();
+                    await connection.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
 
                     using (var reader = await command.ExecuteReaderAsync())
                     {
-                        if (await reader.ReadAsync())
+                        while (await reader.ReadAsync())
                         {
-                            reporte = new ReporteResponse();
-                            reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
-                            reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
-                            reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
-                            reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
+                            var item = new ReporteResponse
+                            {
+                                Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]),
+                                Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]),
+                                Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]),
+                                Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"])
+                            };
+                            reporte.Add(item);
                         }
                     }
                 }
             }
             return Ok(reporte);
             ////////////////////////////////////////////////////////////////
+            //Tipo 2 -FIN
+            ////////////////////////////////////////////////////////////////
 
             //Original
-
+            //return Ok(reporte);
             //}
             //catch (ApplicationException e)
             //{
