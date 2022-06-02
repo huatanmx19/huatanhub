@@ -45,7 +45,8 @@ namespace HuatanHub
                                 "https://huatan-hub.web.app",
                                 "https://huatan.app:70",
                                 "http://70.37.53.118:70",
-                                "http://localhost:4200"
+                                "http://localhost:4200",
+                                "http://34.71.46.142"
                             )
                             .AllowCredentials()
                             .AllowAnyHeader()

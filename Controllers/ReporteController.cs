@@ -34,12 +34,12 @@ namespace HuatanHub.Controllers
         //public ActionResult<IEnumerable<ReporteResponse>> GetReporteTramo(int id)
         {
             //Ajuste
-            //SqlConnection con = new SqlConnection();
-            //con.ConnectionString =
-            //  "Data Source=34.71.46.142;" +
-            //  "Initial Catalog=huatan;" +
-            //  "User id=sqlserver;" +
-            //  "Password=qiGMdk8G3H7LqIG3;";
+            SqlConnection con = new SqlConnection();
+            con.ConnectionString =
+              "Data Source=34.71.46.142;" +
+              "Initial Catalog=huatan;" +
+              "User id=sqlserver;" +
+              "Password=qiGMdk8G3H7LqIG3;";
             //Ajuste
             var reporte = new List<ReporteResponse>();
 
@@ -50,21 +50,21 @@ namespace HuatanHub.Controllers
 
                 var delta = DateTime.Now.AddMinutes(minutes);
 
-                ////ORIGINAL - INICIO
-                var queryActivos = _context.Locations
-                    .Include(x => x.Empleado)
-                    .Where(x => x.Timestamp > delta);
+                //////ORIGINAL - INICIO
+                //var queryActivos = _context.Locations
+                //    .Include(x => x.Empleado)
+                //    .Where(x => x.Timestamp > delta);
 
-                if (id > 0)
-                    queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
+                //if (id > 0)
+                //    queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
 
-                var activos = await queryActivos
-                      .GroupBy(x => x.EmpleadoId)
-                      .Select(g => new
-                      {
-                          id = g.Key,
-                          numData = g.Count()
-                      }).CountAsync();
+                //var activos = await queryActivos
+                //      .GroupBy(x => x.EmpleadoId)
+                //      .Select(g => new
+                //      {
+                //          id = g.Key,
+                //          numData = g.Count()
+                //      }).CountAsync();
 
                 //var queryAttendanceToday = _context.Asistencias
                 //    .Include(x => x.Empleado)
@@ -98,30 +98,22 @@ namespace HuatanHub.Controllers
                 ////ORIGINAL - FIN
 
                 //Ajuste
-                //con.Open();
-                //var command = new SqlCommand(qReporte.Reporte, con);
-                //command.CommandType = CommandType.StoredProcedure;
-                //command.Parameters.AddWithValue("@id", id);
-                //command.Parameters.AddWithValue("@fecha", delta);
-                //using (var rd = command.ExecuteReader())
-                //{
-                //    while (rd.Read())
-                //        reporte.Add(new ReporteResponse
-                //        {
-                //            Total = rd.IsDBNull(rd.GetOrdinal("Total")) ? 0 : Convert.ToInt32(rd["Total"]),
-                //            Asistencia = rd.IsDBNull(rd.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(rd["Asistencia"]),
-                //            Activos = rd.IsDBNull(rd.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(rd["Activos"]),
-                //            Inactivos = rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
-                //        });
-                // }
-
-                reporte.Add(new ReporteResponse
+                con.Open();
+                var command = new SqlCommand(qReporte.Reporte, con);
+                command.CommandType = CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@fecha", delta);
+                using (var rd = command.ExecuteReader())
                 {
-                    Total = 361,//rd.IsDBNull(rd.GetOrdinal("Total")) ? 0 : Convert.ToInt32(rd["Total"]),
-                    Asistencia = 182,//rd.IsDBNull(rd.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(rd["Asistencia"]),
-                    Activos = 648,//rd.IsDBNull(rd.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(rd["Activos"]),
-                    Inactivos = -5//rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
-                });
+                    while (rd.Read())
+                        reporte.Add(new ReporteResponse
+                        {
+                            Total = rd.IsDBNull(rd.GetOrdinal("Total")) ? 0 : Convert.ToInt32(rd["Total"]),
+                            Asistencia = rd.IsDBNull(rd.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(rd["Asistencia"]),
+                            Activos = rd.IsDBNull(rd.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(rd["Activos"]),
+                            Inactivos = rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
+                        });
+                }
 
                 //Original
                 return Ok(reporte);
