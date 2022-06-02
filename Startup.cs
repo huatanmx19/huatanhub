@@ -71,10 +71,9 @@ namespace HuatanHub
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HuatanHub v1.1"));
             }
 
-
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors("CorsPolicy");
+            //app.UseCors("CorsPolicy");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
