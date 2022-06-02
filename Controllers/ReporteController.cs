@@ -30,7 +30,8 @@ namespace HuatanHub.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReporteResponse>> GetReporteTramo(int id)
+        //public async Task<ActionResult<ReporteResponse>> GetReporteTramo(int id)
+        public ActionResult<IEnumerable<ReporteResponse>> GetReporteTramo(int id)
         {
             //Ajuste
             SqlConnection con = new SqlConnection();
