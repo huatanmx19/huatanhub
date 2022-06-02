@@ -30,8 +30,8 @@ namespace HuatanHub.Controllers
         }
 
         [HttpGet("{id}")]
-        //public async Task<ActionResult<ReporteResponse>> GetReporteTramo(int id)
-        public ActionResult<IEnumerable<ReporteResponse>> GetReporteTramo(int id)
+        public async Task<ActionResult<ReporteResponse>> GetReporteTramo(int id)
+        //public ActionResult<IEnumerable<ReporteResponse>> GetReporteTramo(int id)
         {
             //Ajuste
             //SqlConnection con = new SqlConnection();
@@ -51,20 +51,20 @@ namespace HuatanHub.Controllers
                 var delta = DateTime.Now.AddMinutes(minutes);
 
                 ////ORIGINAL - INICIO
-                //var queryActivos = _context.Locations
-                //    .Include(x => x.Empleado)
-                //    .Where(x => x.Timestamp > delta);
+                var queryActivos = _context.Locations
+                    .Include(x => x.Empleado)
+                    .Where(x => x.Timestamp > delta);
 
-                //if (id > 0)
-                //    queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
+                if (id > 0)
+                    queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
 
-                //var activos = await queryActivos
-                //      .GroupBy(x => x.EmpleadoId)
-                //      .Select(g => new
-                //      {
-                //          id = g.Key,
-                //          numData = g.Count()
-                //      }).CountAsync();
+                var activos = await queryActivos
+                      .GroupBy(x => x.EmpleadoId)
+                      .Select(g => new
+                      {
+                          id = g.Key,
+                          numData = g.Count()
+                      }).CountAsync();
 
                 //var queryAttendanceToday = _context.Asistencias
                 //    .Include(x => x.Empleado)
