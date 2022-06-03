@@ -31,18 +31,17 @@ namespace HuatanHub.Controllers
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ReporteResponse>> GetReporteTramo(int id)
-        //public ActionResult<IEnumerable<ReporteResponse>> GetReporteTramo(int id)
         {
             //Ajuste
-            SqlConnection con = new SqlConnection();
-            con.ConnectionString =
-              "Data Source=34.71.46.142;" +
-              "Initial Catalog=huatan;" +
-              "User id=sqlserver;" +
-              "Password=qiGMdk8G3H7LqIG3;";
+            //SqlConnection con = new SqlConnection();
+            //con.ConnectionString =
+            //  "Data Source=34.71.46.142;" +
+            //  "Initial Catalog=huatan;" +
+            //  "User id=sqlserver;" +
+            //  "Password=qiGMdk8G3H7LqIG3;";
             //Ajuste
             //var reporte = new List<ReporteResponse>();
-            var reporte = new ReporteResponse();
+            //var reporte = new ReporteResponse();
 
             //try
             //{
@@ -52,58 +51,58 @@ namespace HuatanHub.Controllers
             var delta = DateTime.Now.AddMinutes(minutes);
 
             //////ORIGINAL - INICIO
-            //var queryActivos = _context.Locations
-            //    .Include(x => x.Empleado)
-            //    .Where(x => x.Timestamp > delta);
+            var queryActivos = _context.Locations
+                .Include(x => x.Empleado)
+                .Where(x => x.Timestamp > delta);
 
-            //if (id > 0)
-            //    queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
+            if (id > 0)
+                queryActivos = queryActivos.Where(x => x.Empleado.TramoId == id);
 
-            //var activos = await queryActivos
-            //      .GroupBy(x => x.EmpleadoId)
-            //      .Select(g => new
-            //      {
-            //          id = g.Key,
-            //          numData = g.Count()
-            //      }).CountAsync();
+            var activos = await queryActivos
+                  .GroupBy(x => x.EmpleadoId)
+                  .Select(g => new
+                  {
+                      id = g.Key,
+                      numData = g.Count()
+                  }).CountAsync();
 
-            //var queryAttendanceToday = _context.Asistencias
-            //    .Include(x => x.Empleado)
-            //    .ThenInclude(x => x.Tramo)
-            //    .Where(x => x.HoraEntrada != null)
-            //    .Where(x => x.Fecha == DateTime.Today);
+            var queryAttendanceToday = _context.Asistencias
+                .Include(x => x.Empleado)
+                .ThenInclude(x => x.Tramo)
+                .Where(x => x.HoraEntrada != null)
+                .Where(x => x.Fecha == DateTime.Today);
 
-            //if (id > 0)
-            //    queryAttendanceToday = queryAttendanceToday.Where(x => x.Empleado.TramoId == id);
+            if (id > 0)
+                queryAttendanceToday = queryAttendanceToday.Where(x => x.Empleado.TramoId == id);
 
-            //var attendanceToday = await queryAttendanceToday.CountAsync();
+            var attendanceToday = await queryAttendanceToday.CountAsync();
 
-            //var queryEmployeeTotal = _context.Empleados
-            //    .Where(x => x.Active);
+            var queryEmployeeTotal = _context.Empleados
+                .Where(x => x.Active);
 
-            //if (id > 0)
-            //    queryEmployeeTotal = queryEmployeeTotal.Where(x => x.TramoId == id);
+            if (id > 0)
+                queryEmployeeTotal = queryEmployeeTotal.Where(x => x.TramoId == id);
 
-            //var employeeTotal = await queryEmployeeTotal.CountAsync();
+            var employeeTotal = await queryEmployeeTotal.CountAsync();
 
-            //var inactivos = attendanceToday - activos;
+            var inactivos = attendanceToday - activos;
 
-            //var reporte = new ReporteResponse
-            //{
-            //    Total = employeeTotal,
-            //    Asistencia = attendanceToday,
-            //    Activos = activos,
-            //    Inactivos = inactivos
-            //};
+            var reporte = new ReporteResponse
+            {
+                Total = employeeTotal,
+                Asistencia = attendanceToday,
+                Activos = activos,
+                Inactivos = inactivos
+            };
 
             ////ORIGINAL - FIN
 
             //Ajuste
             //con.Open();
-            var command = new SqlCommand(qReporte.Reporte, con);
-            command.CommandType = CommandType.StoredProcedure;
-            command.Parameters.AddWithValue("@id", id);
-            command.Parameters.AddWithValue("@fecha", delta);
+            ////var command = new SqlCommand(qReporte.Reporte, con);
+            ////command.CommandType = CommandType.StoredProcedure;
+            ////command.Parameters.AddWithValue("@id", id);
+            ////command.Parameters.AddWithValue("@fecha", delta);
             //using (var rd = command.ExecuteReader())
             //{
             //    while (rd.Read())
@@ -116,27 +115,20 @@ namespace HuatanHub.Controllers
             //        });
             //}
 
-            //await con.OpenAsync();
-            await con.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
+            //await con.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
 
-            using (var reader = await command.ExecuteReaderAsync())
-            {
-                if (await reader.ReadAsync())
-                {
-                    reporte = new ReporteResponse();
-                    reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
-                    reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
-                    reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
-                    reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
-                }
-            }
-
-            //await con.CloseAsync();
-
-
-
-
-            //return Ok(reporte);
+            //using (var reader = await command.ExecuteReaderAsync())
+            //{
+            //    if (await reader.ReadAsync())
+            //    {
+            //        reporte = new ReporteResponse();
+            //        reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
+            //        reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
+            //        reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
+            //        reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
+            //    }
+            //}
+            ////return Ok(reporte);
 
 
 
