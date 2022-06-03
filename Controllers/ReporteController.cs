@@ -99,7 +99,7 @@ namespace HuatanHub.Controllers
             ////ORIGINAL - FIN
 
             //Ajuste
-            con.Open();
+            //con.Open();
             var command = new SqlCommand(qReporte.Reporte, con);
             command.CommandType = CommandType.StoredProcedure;
             command.Parameters.AddWithValue("@id", id);
@@ -117,6 +117,7 @@ namespace HuatanHub.Controllers
             //}
 
             //await con.OpenAsync();
+            await con.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
 
             using (var reader = await command.ExecuteReaderAsync())
             {
