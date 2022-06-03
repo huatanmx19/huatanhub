@@ -42,6 +42,7 @@ namespace HuatanHub.Controllers
               "Password=qiGMdk8G3H7LqIG3;";
             //Ajuste
             //var reporte = new List<ReporteResponse>();
+            var reporte = new ReporteResponse();
 
             //try
             //{
@@ -87,7 +88,7 @@ namespace HuatanHub.Controllers
 
             //var inactivos = attendanceToday - activos;
 
-            //    var reporte = new ReporteResponse
+            //var reporte = new ReporteResponse
             //{
             //    Total = employeeTotal,
             //    Asistencia = attendanceToday,
@@ -98,12 +99,12 @@ namespace HuatanHub.Controllers
             ////ORIGINAL - FIN
 
             //Ajuste
-            //con.Open();
-            //var command = new SqlCommand(qReporte.Reporte, con);
-            //command.CommandType =  CommandType.StoredProcedure;
-            //command.Parameters.AddWithValue("@id", id);
-            //command.Parameters.AddWithValue("@fecha", delta);
-            //using (var rd =  command.ExecuteReader())
+            con.Open();
+            var command = new SqlCommand(qReporte.Reporte, con);
+            command.CommandType = CommandType.StoredProcedure;
+            command.Parameters.AddWithValue("@id", id);
+            command.Parameters.AddWithValue("@fecha", delta);
+            //using (var rd = command.ExecuteReader())
             //{
             //    while (rd.Read())
             //        reporte.Add(new ReporteResponse
@@ -114,6 +115,25 @@ namespace HuatanHub.Controllers
             //            Inactivos = rd.IsDBNull(rd.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(rd["Inactivos"])
             //        });
             //}
+
+            //await con.OpenAsync();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                if (await reader.ReadAsync())
+                {
+                    reporte = new ReporteResponse();
+                    reporte.Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]);
+                    reporte.Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]);
+                    reporte.Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]);
+                    reporte.Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"]);
+                }
+            }
+
+            //await con.CloseAsync();
+
+
+
 
             //return Ok(reporte);
 
@@ -155,41 +175,41 @@ namespace HuatanHub.Controllers
             ////////////////////////////////////////////////////////////////
             //Tipo 2 -INICIO
             ////////////////////////////////////////////////////////////////
-            var reporte = new List<ReporteResponse>();
-            using (SqlConnection connection = new SqlConnection(con.ConnectionString))
-            {
-                using (var command = new SqlCommand(qReporte.Reporte, connection))
-                {
-                    command.CommandType = CommandType.StoredProcedure;
+            //var reporte = new List<ReporteResponse>();
+            //using (SqlConnection connection = new SqlConnection(con.ConnectionString))
+            //{
+            //    using (var command = new SqlCommand(qReporte.Reporte, connection))
+            //    {
+            //        command.CommandType = CommandType.StoredProcedure;
 
-                    command.Parameters.AddWithValue("@id", id);
-                    command.Parameters.AddWithValue("@fecha", delta);
+            //        command.Parameters.AddWithValue("@id", id);
+            //        command.Parameters.AddWithValue("@fecha", delta);
 
-                    await connection.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
+            //        await connection.OpenAsync().ConfigureAwait(continueOnCapturedContext: false);
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var item = new ReporteResponse
-                            {
-                                Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]),
-                                Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]),
-                                Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]),
-                                Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"])
-                            };
-                            reporte.Add(item);
-                        }
-                    }
-                }
-            }
-            return Ok(reporte);
+            //        using (var reader = await command.ExecuteReaderAsync())
+            //        {
+            //            while (await reader.ReadAsync())
+            //            {
+            //                var item = new ReporteResponse
+            //                {
+            //                    Total = reader.IsDBNull(reader.GetOrdinal("Total")) ? 0 : Convert.ToInt32(reader["Total"]),
+            //                    Asistencia = reader.IsDBNull(reader.GetOrdinal("Asistencia")) ? 0 : Convert.ToInt32(reader["Asistencia"]),
+            //                    Activos = reader.IsDBNull(reader.GetOrdinal("Activos")) ? 0 : Convert.ToInt32(reader["Activos"]),
+            //                    Inactivos = reader.IsDBNull(reader.GetOrdinal("Inactivos")) ? 0 : Convert.ToInt32(reader["Inactivos"])
+            //                };
+            //                reporte.Add(item);
+            //            }
+            //        }
+            //    }
+            //}
+            //return Ok(reporte);
             ////////////////////////////////////////////////////////////////
             //Tipo 2 -FIN
             ////////////////////////////////////////////////////////////////
 
             //Original
-            //return Ok(reporte);
+            return Ok(reporte);
             //}
             //catch (ApplicationException e)
             //{
