@@ -59,6 +59,7 @@ namespace HuatanHub.Controllers
                 .Include(x => x.Empleado)
                 .ThenInclude(x => x.Tramo)
                 .Where(x => x.HoraEntrada != null)
+                .Where(x => x.HoraSalida == null)
                 .Where(x => x.Fecha == DateTime.Today);
 
             if (id > 0)
